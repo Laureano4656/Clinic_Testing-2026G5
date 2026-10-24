@@ -10,7 +10,7 @@ import java.sql.*;
 public class BaseDeDatos {
     private static BaseDeDatos instancia;
     private Connection conexion;
-    private static final String URL = "jdbc:mysql://localhost:3306/?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "progra_c";
     private static final String CONTRASENA = "progra_c";
 
