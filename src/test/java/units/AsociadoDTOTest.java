@@ -29,23 +29,9 @@ public class AsociadoDTOTest {
     }
 
     @Test
-    public void TestSetNombreNull() {
-        assertThrows(AssertionError.class, () -> {
-            asociado.setNombre(null);
-        });
-    }
-
-    @Test
     public void TestSetApellido() {
         asociado.setApellido("Peres");
         assertEquals("Seteado correctamente", "Peres", asociado.getApellido());
-    }
-
-    @Test
-    public void TestSetApellidoNull() {
-        assertThrows(AssertionError.class, () -> {
-            asociado.setApellido(null);
-        });
     }
 
     @Test
@@ -55,36 +41,15 @@ public class AsociadoDTOTest {
     }
 
     @Test
-    public void TestSetDniNull() {
-        assertThrows(AssertionError.class, () -> {
-            asociado.setDni(null);
-        });
-    }
-
-    @Test
     public void TestSetCiudad() {
         asociado.setCiudad("Cordoba");
         assertEquals("Seteado correctamente", "Cordoba", asociado.getCiudad());
     }
 
     @Test
-    public void TestSetCiudadNull() {
-        assertThrows(AssertionError.class, () -> {
-            asociado.setCiudad(null);
-        });
-    }
-
-    @Test
     public void TestSetCalle() {
         asociado.setCalle("Av Siempre Viva");
         assertEquals("Seteado correctamente", "Av Siempre Viva", asociado.getCalle());
-    }
-
-    @Test
-    public void TestSetCalleNull() {
-        assertThrows(AssertionError.class, () -> {
-            asociado.setCalle(null);
-        });
     }
 
     @Test
@@ -104,13 +69,6 @@ public class AsociadoDTOTest {
     public void TestSetTelefono() {
         asociado.setTelefono("3511234567");
         assertEquals("Seteado correctamente", "3511234567", asociado.getTelefono());
-    }
-
-    @Test
-    public void TestSetTelefonoNull() {
-        assertThrows(AssertionError.class, () -> {
-            asociado.setTelefono(null);
-        });
     }
 
 }

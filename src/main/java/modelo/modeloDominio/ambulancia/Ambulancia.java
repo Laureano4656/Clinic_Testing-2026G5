@@ -10,7 +10,8 @@ import java.util.Observable;
 /**
  * Clase Ambulancia que representa una ambulancia en el sistema.
  * Utiliza el patrón State para manejar sus diferentes estados.
- * Extiende de Observable para notificar a los observadores sobre cambios en su estado.
+ * Extiende de Observable para notificar a los observadores sobre cambios en su
+ * estado.
  */
 public class Ambulancia extends Observable {
     private State estadoActual;
@@ -80,7 +81,8 @@ public class Ambulancia extends Observable {
     }
 
     /**
-     * Establece si la simulación está activa y despierta a todos los hilos esperando.
+     * Establece si la simulación está activa y despierta a todos los hilos
+     * esperando.
      */
     public synchronized void setSimulacionActiva(boolean simulacionActiva) {
         this.isSimulacionActiva = simulacionActiva;
@@ -123,7 +125,8 @@ public class Ambulancia extends Observable {
                 setChanged();
                 notifyObservers(new NotificacionSimulacion(
                         "❌ 🔧 Ambulancia ocupada, el operario " + o.getNombre() +
-                                " espera para solicitar mantenimiento...", "NO_AMBULANCIA"));
+                                " espera para solicitar mantenimiento...",
+                        "NO_AMBULANCIA"));
                 wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -145,7 +148,8 @@ public class Ambulancia extends Observable {
         setChanged();
         notifyObservers(new NotificacionSimulacion(
                 "🔧 El operario " + o.getNombre() +
-                        " solicitó el mantenimiento de la ambulancia.", "OK"));
+                        " solicitó el mantenimiento de la ambulancia.",
+                "OK"));
     }
 
     /**
@@ -176,7 +180,8 @@ public class Ambulancia extends Observable {
                 setChanged();
                 notifyObservers(new NotificacionSimulacion(
                         "❌ 🏠 Ambulancia ocupada, el asociado " + a.getNombre() +
-                                " espera para ser atendido a domicilio...", "NO_AMBULANCIA"));
+                                " espera para ser atendido a domicilio...",
+                        "NO_AMBULANCIA"));
                 wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -211,7 +216,8 @@ public class Ambulancia extends Observable {
                 setChanged();
                 notifyObservers(new NotificacionSimulacion(
                         "❌ 🚑 Ambulancia ocupada, el asociado " + a.getNombre() +
-                                " espera para ser trasladado a la clínica...", "NO_AMBULANCIA"));
+                                " espera para ser trasladado a la clínica...",
+                        "NO_AMBULANCIA"));
                 wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
