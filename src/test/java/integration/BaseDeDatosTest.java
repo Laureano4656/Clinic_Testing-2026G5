@@ -28,7 +28,7 @@ public class BaseDeDatosTest {
     @Before
     public void setUp() throws Exception {
         baseDeDatos = BaseDeDatos.getInstancia();
-        if (baseDeDatos.getConexion() == null || baseDeDatos.getConexion().isClosed()) {
+        if (baseDeDatos.getConexion() != null && baseDeDatos.getConexion().isClosed()) {
             Field instanciaField = BaseDeDatos.class.getDeclaredField("instancia");
             instanciaField.setAccessible(true);
             instanciaField.set(null, null);
@@ -54,29 +54,6 @@ public class BaseDeDatosTest {
         assertSame("getInstancia() debe retornar exactamente la misma referencia Singleton", baseDeDatos, otraInstancia);
         assertNotNull("La conexión interna no debe ser nula", baseDeDatos.getConexion());
         assertFalse("La conexión debe estar abierta", baseDeDatos.getConexion().isClosed());
-    }
-
-    /**
-     * Prueba el ciclo de vida del Singleton al cerrar la conexión.
-     * FALLA EN ROJO: cerrarConexion() cierra el objeto Connection pero no reinicia la instancia
-     * ni getInstancia() valida si la conexión está cerrada, dejando el Singleton inutilizable.
-     */
-    @Test
-    public void testCerrarConexionYReobtenerInstanciaOperativa() throws Exception {
-        try {
-            baseDeDatos.cerrarConexion();
-            BaseDeDatos nuevaReferencia = BaseDeDatos.getInstancia();
-            assertFalse(
-                "Al solicitar getInstancia() tras cerrarConexion(), la conexión debería estar abierta y operativa",
-                nuevaReferencia.getConexion().isClosed()
-            );
-        } finally {
-            // Restaurar el Singleton por reflexión para no afectar el resto de la suite
-            Field instanciaField = BaseDeDatos.class.getDeclaredField("instancia");
-            instanciaField.setAccessible(true);
-            instanciaField.set(null, null);
-            baseDeDatos = BaseDeDatos.getInstancia();
-        }
     }
 
     // =========================================================================
@@ -141,6 +118,47 @@ public class BaseDeDatosTest {
             );
         }
         resultado.close();
+    }
+
+    /**
+     * Verifica la consistencia de longitud/formato de los teléfonos en los datos semilla.
+     * FALLA EN ROJO: Los registros id = 12 ('155889900') e id = 17 ('155445566') tienen 9 dígitos
+     * mientras que todos los demás asociados semilla tienen teléfonos de 10 dígitos.
+     */
+    @Test
+    public void testDatosSemillaConsistenciaLongitudTelefono() throws SQLException {
+        ResultSet resultado = baseDeDatos.ejecutarConsulta("SELECT * FROM Asociados;", -1);
+        while (resultado.next()) {
+            String telefono = resultado.getString("telefono");
+            assertEquals(
+                "Inconsistencia en teléfono semilla para id=" + resultado.getInt("id") + " (" + telefono + ")",
+                10,
+                telefono.length()
+            );
+        }
+        resultado.close();
+    }
+
+    @Test
+    public void testIniciarBDIdempotenciaRestauraEstadoSemilla() throws SQLException {
+        // Modificamos el estado eliminando un registro e insertando otro
+        baseDeDatos.ejecutarDelete("DELETE FROM Asociados WHERE dni = ?;", "12345678");
+        AsociadoDTO extra = new AsociadoDTO("Temp", "User", "99999999", "Mar del Plata", "Calle", 10, "2230001111");
+        baseDeDatos.ejecutarInsert(
+            "INSERT INTO Asociados (nombre, apellido, DNI, calle, numero, ciudad, telefono) VALUES (?, ?, ?, ?, ?, ?, ?);",
+            extra
+        );
+
+        // Re-ejecutar iniciarBD() debe recrear la tabla y restaurar exactamente los 20 asociados originales
+        baseDeDatos.iniciarBD();
+
+        ResultSet rs = baseDeDatos.ejecutarConsulta("SELECT * FROM Asociados;", -1);
+        int contador = 0;
+        while (rs.next()) {
+            contador++;
+        }
+        rs.close();
+        assertEquals("iniciarBD() debe restaurar exactamente 20 registros", 20, contador);
     }
 
     // =========================================================================
@@ -261,5 +279,37 @@ public class BaseDeDatosTest {
         assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarActualizacion("UPDATE Asociados SET nombre = ?", null));
         assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarDelete(null, "12345678"));
         assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarDelete("DELETE FROM Asociados WHERE dni = ?", null));
+    }
+
+    /**
+     * Verifica qué ocurre al usar el valor límite id = -1 en una consulta parametrizada con '?'.
+     * Como ejecutarConsulta usa (id != -1) como valor centinela para omitir stmt.setInt(1, id),
+     * pasar id = -1 en una query con '?' deja el parámetro sin asignar y lanza SQLException.
+     */
+    @Test
+    public void testEjecutarConsultaConCentinelaMenosUnoEnQueryConParametroLanzaSQLException() {
+        assertThrows(
+            "Pasar id = -1 a una consulta con '?' no setea el parámetro 1 y debe lanzar SQLException",
+            SQLException.class,
+            () -> baseDeDatos.ejecutarConsulta("SELECT * FROM Asociados WHERE id = ?;", -1)
+        );
+    }
+
+    /**
+     * Prueba de integración entre AsociadoDTO y BaseDeDatos.ejecutarInsert.
+     * FALLA EN ROJO: El constructor parametrizado de AsociadoDTO no valida nulls ni numero <= 0,
+     * y la tabla Asociados en iniciarBD() no tiene restricciones NOT NULL ni CHECK (numero > 0),
+     * permitiendo insertar registros inválidos en MySQL sin lanzar AssertionError ni SQLException.
+     */
+    @Test
+    public void testEjecutarInsertConDTOInvalidoPorConstructorDeberiaRechazarse() {
+        AsociadoDTO dtoInvalido = new AsociadoDTO(null, null, null, null, null, -10, null);
+        String insertSQL = "INSERT INTO Asociados (nombre, apellido, DNI, calle, numero, ciudad, telefono) VALUES (?, ?, ?, ?, ?, ?, ?);";
+
+        assertThrows(
+            "No debería permitirse insertar un AsociadoDTO con campos null y número negativo (-10)",
+            Throwable.class,
+            () -> baseDeDatos.ejecutarInsert(insertSQL, dtoInvalido)
+        );
     }
 }

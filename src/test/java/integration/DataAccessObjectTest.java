@@ -33,7 +33,7 @@ public class DataAccessObjectTest {
     @Before
     public void setUp() throws Exception {
         baseDeDatos = BaseDeDatos.getInstancia();
-        if (baseDeDatos.getConexion() == null || baseDeDatos.getConexion().isClosed()) {
+        if (baseDeDatos.getConexion() != null && baseDeDatos.getConexion().isClosed()) {
             Field instanciaField = BaseDeDatos.class.getDeclaredField("instancia");
             instanciaField.setAccessible(true);
             instanciaField.set(null, null);
@@ -84,6 +84,18 @@ public class DataAccessObjectTest {
         assertEquals("2236123456", dto.getTelefono());
     }
 
+    @Test
+    public void testCrearDTODesdeAsociadoConDomicilioNullLanzaNullPointerException() {
+        // Persona y Asociado no validan que domicilio != null en su constructor
+        Asociado asociadoSinDomicilio = new Asociado("Pedro", "Gomez", "38111222", "2234445566", null);
+
+        assertThrows(
+            "CrearDTO lanza NullPointerException cuando el Asociado tiene Domicilio null",
+            NullPointerException.class,
+            () -> dao.CrearDTO(asociadoSinDomicilio)
+        );
+    }
+
     // =========================================================================
     // 2. Operaciones de Alta y Lectura (guardar, cargarBD, cargarConLimite, cargar)
     // =========================================================================
@@ -108,6 +120,26 @@ public class DataAccessObjectTest {
     }
 
     @Test
+    public void testFlujoCompletoAsociadoDTOHaciaAsociadoYGuardarEnBD() throws SQLException {
+        // Simula el flujo real de Clinica.guardarNuevoAsociado(AsociadoDTO)
+        AsociadoDTO dtoEntrada = new AsociadoDTO("Luciano", "Vega", "45123456", "Mar del Plata", "Salta", 1850, "2235112233");
+        Asociado asociadoDominio = new Asociado(dtoEntrada);
+
+        dao.guardar(asociadoDominio);
+
+        ArrayList<AsociadoDTO> lista = dao.cargarBD();
+        assertEquals(21, lista.size());
+        AsociadoDTO recuperado = lista.get(20);
+        assertEquals("Luciano", recuperado.getNombre());
+        assertEquals("Vega", recuperado.getApellido());
+        assertEquals("45123456", recuperado.getDni());
+        assertEquals("Salta", recuperado.getCalle());
+        assertEquals(1850, recuperado.getNumero());
+        assertEquals("Mar del Plata", recuperado.getCiudad());
+        assertEquals("2235112233", recuperado.getTelefono());
+    }
+
+    @Test
     public void testCargarBDDevuelveTodosLosAsociadosSemilla() throws SQLException {
         ArrayList<AsociadoDTO> asociados = dao.cargarBD();
         assertNotNull(asociados);
@@ -128,6 +160,10 @@ public class DataAccessObjectTest {
         // Valor intermedio: 5
         ArrayList<AsociadoDTO> cincoAsociados = dao.cargarConLimite(5);
         assertEquals("Con límite 5 debe retornar exactamente 5 asociados", 5, cincoAsociados.size());
+
+        // Valor límite exacto a la cantidad de registros en BD: 20
+        ArrayList<AsociadoDTO> veinteAsociados = dao.cargarConLimite(20);
+        assertEquals("Con límite 20 debe retornar exactamente los 20 asociados semilla", 20, veinteAsociados.size());
 
         // Valor superior a la cantidad en BD: 25 (debe retornar los 20 existentes)
         ArrayList<AsociadoDTO> maximoAsociados = dao.cargarConLimite(25);
@@ -229,6 +265,14 @@ public class DataAccessObjectTest {
         assertFalse("El asociado con DNI 12345678 ya no debe estar en la base de datos", existeEliminado);
     }
 
+    @Test
+    public void testEliminarAsociadoConDniInexistenteMantieneRegistrosIntactos() throws SQLException {
+        dao.eliminar("99999999");
+
+        ArrayList<AsociadoDTO> lista = dao.cargarBD();
+        assertEquals("Eliminar un DNI inexistente no debe alterar los 20 registros semilla", 20, lista.size());
+    }
+
     // =========================================================================
     // 4. Excepciones de SQL y Validaciones de Integridad
     // =========================================================================
@@ -289,5 +333,22 @@ public class DataAccessObjectTest {
             AssertionError.class,
             () -> dao.guardar(asociadoVacio)
         );
+    }
+
+    /**
+     * Demuestra cómo la falta de validación en el constructor de AsociadoDTO y la ausencia de NOT NULL
+     * en la tabla Asociados corrompen la lectura posterior en DataAccessObject.cargarBD().
+     * FALLA EN ROJO: Se inserta un AsociadoDTO con numero = -5 (permitido por el constructor de AsociadoDTO
+     * y por MySQL), y al llamar a dao.cargarBD(), CrearDTO invoca setNumero(-5) lanzando AssertionError.
+     */
+    @Test
+    public void testCorrupcionDeBDPorDTOInvalidoImpideCargarBD() throws SQLException {
+        AsociadoDTO dtoNumeroNegativo = new AsociadoDTO("Invalido", "Test", "91929394", "Mar del Plata", "Calle", -5, "2231112222");
+        String insertSQL = "INSERT INTO Asociados (nombre, apellido, DNI, calle, numero, ciudad, telefono) VALUES (?, ?, ?, ?, ?, ?, ?);";
+        baseDeDatos.ejecutarInsert(insertSQL, dtoNumeroNegativo);
+
+        // Debería poder cargarse la BD o haberse impedido el insert previo, pero explota con AssertionError en CrearDTO
+        ArrayList<AsociadoDTO> asociados = dao.cargarBD();
+        assertEquals(21, asociados.size());
     }
 }
