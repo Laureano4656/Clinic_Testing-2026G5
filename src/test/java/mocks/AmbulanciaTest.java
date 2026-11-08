@@ -3,6 +3,7 @@ package mocks;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,13 +22,18 @@ import modelo.modeloDominio.personas.operario.Operario;
  * Tests de las transiciones de estado de la Ambulancia según la tabla del
  * enunciado. El asociado, el operario y el retorno automático son mocks.
  */
-public class testAmbulancia {
+public class AmbulanciaTest {
 
     private Ambulancia ambulancia;
 
     @Before
     public void setUp() {
         ambulancia = new Ambulancia();
+    }
+
+    @After
+    public void tearDown() {
+        ambulancia = null;
     }
 
     // 1) Disponible

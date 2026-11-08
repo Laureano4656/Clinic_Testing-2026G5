@@ -1,4 +1,4 @@
-package integration;
+package integrations;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +30,12 @@ public class CerrarConexionTest {
     public void setUp() {
         baseDeDatos = BaseDeDatos.getInstancia();
         dao = new DataAccessObject();
+    }
+
+    @After
+    public void tearDown() {
+        baseDeDatos = null;
+        dao = null;
     }
 
     @Test

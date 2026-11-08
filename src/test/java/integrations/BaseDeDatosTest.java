@@ -1,4 +1,4 @@
-package integration;
+package integrations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,7 +19,7 @@ import persistencia.AsociadoDTO;
 import persistencia.BaseDeDatos;
 
 /**
- * Suite de pruebas de integración para la clase {@link BaseDeDatos} y su interacción
+ * Tests de integración de la clase {@link BaseDeDatos} y su interacción
  * con {@link AsociadoDTO} y el motor MySQL.
  */
 public class BaseDeDatosTest {
@@ -84,20 +84,20 @@ public class BaseDeDatosTest {
     public void testDatosSemillaPrimerYUltimoRegistro() throws SQLException {
         ResultSet rsPrimero = baseDeDatos.ejecutarConsulta("SELECT * FROM Asociados WHERE id = ?;", 1);
         assertTrue("Debe existir el asociado semilla con id = 1", rsPrimero.next());
-        assertEquals("Juan", rsPrimero.getString("nombre"));
-        assertEquals("State", rsPrimero.getString("apellido"));
-        assertEquals("12345678", rsPrimero.getString("dni"));
-        assertEquals("Buenos Aires", rsPrimero.getString("calle"));
-        assertEquals(123, rsPrimero.getInt("numero"));
-        assertEquals("Mar del Plata", rsPrimero.getString("ciudad"));
-        assertEquals("2235551234", rsPrimero.getString("telefono"));
+        assertEquals("El campo nombre debe tener el valor esperado", "Juan", rsPrimero.getString("nombre"));
+        assertEquals("El campo apellido debe tener el valor esperado", "State", rsPrimero.getString("apellido"));
+        assertEquals("El campo dni debe tener el valor esperado", "12345678", rsPrimero.getString("dni"));
+        assertEquals("El campo calle debe tener el valor esperado", "Buenos Aires", rsPrimero.getString("calle"));
+        assertEquals("El campo numero debe tener el valor esperado", 123, rsPrimero.getInt("numero"));
+        assertEquals("El campo ciudad debe tener el valor esperado", "Mar del Plata", rsPrimero.getString("ciudad"));
+        assertEquals("El campo telefono debe tener el valor esperado", "2235551234", rsPrimero.getString("telefono"));
         rsPrimero.close();
 
         ResultSet rsUltimo = baseDeDatos.ejecutarConsulta("SELECT * FROM Asociados WHERE id = ?;", 20);
         assertTrue("Debe existir el asociado semilla con id = 20", rsUltimo.next());
-        assertEquals("Adrian", rsUltimo.getString("nombre"));
-        assertEquals("Composite", rsUltimo.getString("apellido"));
-        assertEquals("28293031", rsUltimo.getString("dni"));
+        assertEquals("El campo nombre debe tener el valor esperado", "Adrian", rsUltimo.getString("nombre"));
+        assertEquals("El campo apellido debe tener el valor esperado", "Composite", rsUltimo.getString("apellido"));
+        assertEquals("El campo dni debe tener el valor esperado", "28293031", rsUltimo.getString("dni"));
         rsUltimo.close();
     }
 
@@ -174,13 +174,13 @@ public class BaseDeDatosTest {
 
         ResultSet rs = baseDeDatos.ejecutarConsulta("SELECT * FROM Asociados WHERE id = ?;", 21);
         assertTrue("El asociado insertado debe existir con id = 21", rs.next());
-        assertEquals("Enzo", rs.getString("nombre"));
-        assertEquals("Sorrenti", rs.getString("apellido"));
-        assertEquals("40506070", rs.getString("dni"));
-        assertEquals("Constitucion", rs.getString("calle"));
-        assertEquals(5000, rs.getInt("numero"));
-        assertEquals("Mar del Plata", rs.getString("ciudad"));
-        assertEquals("2234445566", rs.getString("telefono"));
+        assertEquals("El campo nombre debe tener el valor esperado", "Enzo", rs.getString("nombre"));
+        assertEquals("El campo apellido debe tener el valor esperado", "Sorrenti", rs.getString("apellido"));
+        assertEquals("El campo dni debe tener el valor esperado", "40506070", rs.getString("dni"));
+        assertEquals("El campo calle debe tener el valor esperado", "Constitucion", rs.getString("calle"));
+        assertEquals("El campo numero debe tener el valor esperado", 5000, rs.getInt("numero"));
+        assertEquals("El campo ciudad debe tener el valor esperado", "Mar del Plata", rs.getString("ciudad"));
+        assertEquals("El campo telefono debe tener el valor esperado", "2234445566", rs.getString("telefono"));
         rs.close();
     }
 
@@ -207,7 +207,7 @@ public class BaseDeDatosTest {
 
         // El registro id = 1 (Juan State, DNI 12345678) NO debería haber sido modificado
         ResultSet rsId1 = baseDeDatos.ejecutarConsulta("SELECT * FROM Asociados WHERE id = ?;", 1);
-        assertTrue(rsId1.next());
+        assertTrue("Debe existir el asociado semilla con id = 1", rsId1.next());
         String nombreId1 = rsId1.getString("nombre");
         rsId1.close();
 
@@ -272,13 +272,13 @@ public class BaseDeDatosTest {
     public void testPrecondicionesNulasLanzanAssertionError() {
         AsociadoDTO dtoValido = new AsociadoDTO("Juan", "Perez", "30405060", "Mar del Plata", "Luro", 123, "2234567890");
 
-        assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarConsulta(null, 1));
-        assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarInsert(null, dtoValido));
-        assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarInsert("INSERT INTO Asociados VALUES (?)", null));
-        assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarActualizacion(null, dtoValido));
-        assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarActualizacion("UPDATE Asociados SET nombre = ?", null));
-        assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarDelete(null, "12345678"));
-        assertThrows(AssertionError.class, () -> baseDeDatos.ejecutarDelete("DELETE FROM Asociados WHERE dni = ?", null));
+        assertThrows("ejecutarConsulta con sentencia nula debe lanzar AssertionError", AssertionError.class, () -> baseDeDatos.ejecutarConsulta(null, 1));
+        assertThrows("ejecutarInsert con sentencia nula debe lanzar AssertionError", AssertionError.class, () -> baseDeDatos.ejecutarInsert(null, dtoValido));
+        assertThrows("ejecutarInsert con parametro nulo debe lanzar AssertionError", AssertionError.class, () -> baseDeDatos.ejecutarInsert("INSERT INTO Asociados VALUES (?)", null));
+        assertThrows("ejecutarActualizacion con sentencia nula debe lanzar AssertionError", AssertionError.class, () -> baseDeDatos.ejecutarActualizacion(null, dtoValido));
+        assertThrows("ejecutarActualizacion con parametro nulo debe lanzar AssertionError", AssertionError.class, () -> baseDeDatos.ejecutarActualizacion("UPDATE Asociados SET nombre = ?", null));
+        assertThrows("ejecutarDelete con sentencia nula debe lanzar AssertionError", AssertionError.class, () -> baseDeDatos.ejecutarDelete(null, "12345678"));
+        assertThrows("ejecutarDelete con parametro nulo debe lanzar AssertionError", AssertionError.class, () -> baseDeDatos.ejecutarDelete("DELETE FROM Asociados WHERE dni = ?", null));
     }
 
     /**

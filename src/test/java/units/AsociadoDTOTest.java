@@ -9,7 +9,11 @@ import org.junit.Test;
 
 import persistencia.AsociadoDTO;
 
+/**
+ * Tests unitarios de los setters y getters de AsociadoDTO.
+ */
 public class AsociadoDTOTest {
+
     private AsociadoDTO asociado;
 
     @Before
@@ -23,52 +27,51 @@ public class AsociadoDTOTest {
     }
 
     @Test
-    public void TestSetNombre() {
+    public void testSetNombre() {
         asociado.setNombre("Enzo");
-        assertEquals("Seteado correctamente", "Enzo", asociado.getNombre());
+        assertEquals("El nombre debe ser el seteado", "Enzo", asociado.getNombre());
     }
 
     @Test
-    public void TestSetApellido() {
+    public void testSetApellido() {
         asociado.setApellido("Peres");
-        assertEquals("Seteado correctamente", "Peres", asociado.getApellido());
+        assertEquals("El apellido debe ser el seteado", "Peres", asociado.getApellido());
     }
 
     @Test
-    public void TestSetDni() {
+    public void testSetDni() {
         asociado.setDni("12345678");
-        assertEquals("Seteado correctamente", "12345678", asociado.getDni());
+        assertEquals("El DNI debe ser el seteado", "12345678", asociado.getDni());
     }
 
     @Test
-    public void TestSetCiudad() {
+    public void testSetCiudad() {
         asociado.setCiudad("Cordoba");
-        assertEquals("Seteado correctamente", "Cordoba", asociado.getCiudad());
+        assertEquals("La ciudad debe ser la seteada", "Cordoba", asociado.getCiudad());
     }
 
     @Test
-    public void TestSetCalle() {
+    public void testSetCalle() {
         asociado.setCalle("Av Siempre Viva");
-        assertEquals("Seteado correctamente", "Av Siempre Viva", asociado.getCalle());
+        assertEquals("La calle debe ser la seteada", "Av Siempre Viva", asociado.getCalle());
     }
 
     @Test
-    public void TestSetNumero() {
+    public void testSetNumero() {
         asociado.setNumero(10);
-        assertEquals("Seteado correctamente", 10, asociado.getNumero());
+        assertEquals("El numero debe ser el seteado", 10, asociado.getNumero());
     }
 
     @Test
-    public void TestSetNumeroInvalido() {
-        assertThrows(AssertionError.class, () -> {
+    public void testSetNumeroInvalido() {
+        assertThrows("Un numero negativo debe lanzar AssertionError", AssertionError.class, () -> {
             asociado.setNumero(-1);
         });
     }
 
     @Test
-    public void TestSetTelefono() {
+    public void testSetTelefono() {
         asociado.setTelefono("3511234567");
-        assertEquals("Seteado correctamente", "3511234567", asociado.getTelefono());
+        assertEquals("El telefono debe ser el seteado", "3511234567", asociado.getTelefono());
     }
-
 }

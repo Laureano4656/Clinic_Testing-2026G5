@@ -1,4 +1,4 @@
-package integration;
+package units;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -7,18 +7,17 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Suite aislada para ejecutar únicamente las pruebas de cierre de conexión
- * ({@link CerrarConexionTest}) sin afectar la conexión del Singleton en {@link IntegrationTestingSuite}.
+ * Suite de tests unitarios de AsociadoDTO.
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    CerrarConexionTest.class
+    AsociadoDTOTest.class
 })
-public class CerrarConexionTestingSuite {
+public class AsociadoDTOTestSuite {
     public static void main(String[] args) {
-        Result result = JUnitCore.runClasses(CerrarConexionTestingSuite.class);
+        Result result = JUnitCore.runClasses(AsociadoDTOTestSuite.class);
         System.out.println("==========================================================");
-        System.out.println("Resumen Suite Aislada de Cierre de Conexión (Punto 2):");
+        System.out.println("Resumen Suite Unitaria de AsociadoDTO:");
         System.out.println("Tests ejecutados: " + result.getRunCount());
         System.out.println("Tests exitosos (VERDE): " + (result.getRunCount() - result.getFailureCount()));
         System.out.println("Fallos detectados (ROJO): " + result.getFailureCount());

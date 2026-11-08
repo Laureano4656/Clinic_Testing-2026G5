@@ -1,4 +1,4 @@
-package integration;
+package integrations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -22,7 +22,7 @@ import persistencia.BaseDeDatos;
 import persistencia.DataAccessObject;
 
 /**
- * Suite de pruebas de integración para {@link DataAccessObject}, verificando el mapeo
+ * Tests de integración de {@link DataAccessObject}, verificando el mapeo
  * con {@link AsociadoDTO} y {@link Asociado}, las operaciones CRUD parametrizadas y el
  * manejo de errores de SQL contra el motor MySQL a través de {@link BaseDeDatos}.
  */
@@ -61,13 +61,13 @@ public class DataAccessObjectTest {
         AsociadoDTO dto = dao.CrearDTO(asociado);
 
         assertNotNull("El DTO generado no debe ser nulo", dto);
-        assertEquals("Laureano", dto.getNombre());
-        assertEquals("Garcia", dto.getApellido());
-        assertEquals("42111222", dto.getDni());
-        assertEquals("Av. Colon", dto.getCalle());
-        assertEquals(1500, dto.getNumero());
-        assertEquals("Mar del Plata", dto.getCiudad());
-        assertEquals("2235998877", dto.getTelefono());
+        assertEquals("El campo nombre debe tener el valor esperado", "Laureano", dto.getNombre());
+        assertEquals("El campo apellido debe tener el valor esperado", "Garcia", dto.getApellido());
+        assertEquals("El campo dni debe tener el valor esperado", "42111222", dto.getDni());
+        assertEquals("El campo calle debe tener el valor esperado", "Av. Colon", dto.getCalle());
+        assertEquals("El campo numero debe tener el valor esperado", 1500, dto.getNumero());
+        assertEquals("El campo ciudad debe tener el valor esperado", "Mar del Plata", dto.getCiudad());
+        assertEquals("El campo telefono debe tener el valor esperado", "2235998877", dto.getTelefono());
     }
 
     @Test
@@ -75,13 +75,13 @@ public class DataAccessObjectTest {
         AsociadoDTO dto = dao.CrearDTO(10, "Lucas", "Paniagua", "41222333", "San Juan", 2400, "Mar del Plata", "2236123456");
 
         assertNotNull("El DTO generado no debe ser nulo", dto);
-        assertEquals("Lucas", dto.getNombre());
-        assertEquals("Paniagua", dto.getApellido());
-        assertEquals("41222333", dto.getDni());
-        assertEquals("San Juan", dto.getCalle());
-        assertEquals(2400, dto.getNumero());
-        assertEquals("Mar del Plata", dto.getCiudad());
-        assertEquals("2236123456", dto.getTelefono());
+        assertEquals("El campo nombre debe tener el valor esperado", "Lucas", dto.getNombre());
+        assertEquals("El campo apellido debe tener el valor esperado", "Paniagua", dto.getApellido());
+        assertEquals("El campo dni debe tener el valor esperado", "41222333", dto.getDni());
+        assertEquals("El campo calle debe tener el valor esperado", "San Juan", dto.getCalle());
+        assertEquals("El campo numero debe tener el valor esperado", 2400, dto.getNumero());
+        assertEquals("El campo ciudad debe tener el valor esperado", "Mar del Plata", dto.getCiudad());
+        assertEquals("El campo telefono debe tener el valor esperado", "2236123456", dto.getTelefono());
     }
 
     @Test
@@ -110,13 +110,13 @@ public class DataAccessObjectTest {
         assertEquals("La cantidad total de asociados debe aumentar de 20 a 21", 21, lista.size());
 
         AsociadoDTO guardado = lista.get(20);
-        assertEquals("Nicolas", guardado.getNombre());
-        assertEquals("Zuviria", guardado.getApellido());
-        assertEquals("43999888", guardado.getDni());
-        assertEquals("Alberti", guardado.getCalle());
-        assertEquals(950, guardado.getNumero());
-        assertEquals("Mar del Plata", guardado.getCiudad());
-        assertEquals("2234776655", guardado.getTelefono());
+        assertEquals("El campo nombre debe tener el valor esperado", "Nicolas", guardado.getNombre());
+        assertEquals("El campo apellido debe tener el valor esperado", "Zuviria", guardado.getApellido());
+        assertEquals("El campo dni debe tener el valor esperado", "43999888", guardado.getDni());
+        assertEquals("El campo calle debe tener el valor esperado", "Alberti", guardado.getCalle());
+        assertEquals("El campo numero debe tener el valor esperado", 950, guardado.getNumero());
+        assertEquals("El campo ciudad debe tener el valor esperado", "Mar del Plata", guardado.getCiudad());
+        assertEquals("El campo telefono debe tener el valor esperado", "2234776655", guardado.getTelefono());
     }
 
     @Test
@@ -128,26 +128,26 @@ public class DataAccessObjectTest {
         dao.guardar(asociadoDominio);
 
         ArrayList<AsociadoDTO> lista = dao.cargarBD();
-        assertEquals(21, lista.size());
+        assertEquals("Debe haber 21 asociados (20 semilla + 1 guardado)", 21, lista.size());
         AsociadoDTO recuperado = lista.get(20);
-        assertEquals("Luciano", recuperado.getNombre());
-        assertEquals("Vega", recuperado.getApellido());
-        assertEquals("45123456", recuperado.getDni());
-        assertEquals("Salta", recuperado.getCalle());
-        assertEquals(1850, recuperado.getNumero());
-        assertEquals("Mar del Plata", recuperado.getCiudad());
-        assertEquals("2235112233", recuperado.getTelefono());
+        assertEquals("El campo nombre debe tener el valor esperado", "Luciano", recuperado.getNombre());
+        assertEquals("El campo apellido debe tener el valor esperado", "Vega", recuperado.getApellido());
+        assertEquals("El campo dni debe tener el valor esperado", "45123456", recuperado.getDni());
+        assertEquals("El campo calle debe tener el valor esperado", "Salta", recuperado.getCalle());
+        assertEquals("El campo numero debe tener el valor esperado", 1850, recuperado.getNumero());
+        assertEquals("El campo ciudad debe tener el valor esperado", "Mar del Plata", recuperado.getCiudad());
+        assertEquals("El campo telefono debe tener el valor esperado", "2235112233", recuperado.getTelefono());
     }
 
     @Test
     public void testCargarBDDevuelveTodosLosAsociadosSemilla() throws SQLException {
         ArrayList<AsociadoDTO> asociados = dao.cargarBD();
-        assertNotNull(asociados);
+        assertNotNull("La lista de asociados no debe ser nula", asociados);
         assertEquals("cargarBD() debe retornar los 20 asociados semilla", 20, asociados.size());
-        assertEquals("Juan", asociados.get(0).getNombre());
-        assertEquals("12345678", asociados.get(0).getDni());
-        assertEquals("Adrian", asociados.get(19).getNombre());
-        assertEquals("28293031", asociados.get(19).getDni());
+        assertEquals("El campo nombre debe tener el valor esperado", "Juan", asociados.get(0).getNombre());
+        assertEquals("El campo dni debe tener el valor esperado", "12345678", asociados.get(0).getDni());
+        assertEquals("El campo nombre debe tener el valor esperado", "Adrian", asociados.get(19).getNombre());
+        assertEquals("El campo dni debe tener el valor esperado", "28293031", asociados.get(19).getDni());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class DataAccessObjectTest {
         // Valor límite inferior válido: 1
         ArrayList<AsociadoDTO> unAsociado = dao.cargarConLimite(1);
         assertEquals("Con límite 1 debe retornar exactamente 1 asociado", 1, unAsociado.size());
-        assertEquals("12345678", unAsociado.get(0).getDni());
+        assertEquals("Con límite 1 debe retornar el primer asociado semilla", "12345678", unAsociado.get(0).getDni());
 
         // Valor intermedio: 5
         ArrayList<AsociadoDTO> cincoAsociados = dao.cargarConLimite(5);
@@ -179,9 +179,9 @@ public class DataAccessObjectTest {
     public void testCargarPorIdExistente() throws SQLException {
         AsociadoDTO dto = dao.cargar(1);
         assertNotNull("cargar(1) debe devolver el AsociadoDTO correspondiente al id = 1", dto);
-        assertEquals("Juan", dto.getNombre());
-        assertEquals("State", dto.getApellido());
-        assertEquals("12345678", dto.getDni());
+        assertEquals("El campo nombre debe tener el valor esperado", "Juan", dto.getNombre());
+        assertEquals("El campo apellido debe tener el valor esperado", "State", dto.getApellido());
+        assertEquals("El campo dni debe tener el valor esperado", "12345678", dto.getDni());
     }
 
     /**
@@ -225,10 +225,10 @@ public class DataAccessObjectTest {
             .orElse(null);
 
         assertNotNull("El asociado con DNI 87654321 debe seguir existiendo", mariaEnBD);
-        assertEquals("TemplateActualizada", mariaEnBD.getApellido());
-        assertEquals("Nueva Calle", mariaEnBD.getCalle());
-        assertEquals(555, mariaEnBD.getNumero());
-        assertEquals("2239999999", mariaEnBD.getTelefono());
+        assertEquals("El campo apellido debe tener el valor esperado", "TemplateActualizada", mariaEnBD.getApellido());
+        assertEquals("El campo calle debe tener el valor esperado", "Nueva Calle", mariaEnBD.getCalle());
+        assertEquals("El campo numero debe tener el valor esperado", 555, mariaEnBD.getNumero());
+        assertEquals("El campo telefono debe tener el valor esperado", "2239999999", mariaEnBD.getTelefono());
     }
 
     /**
@@ -304,19 +304,19 @@ public class DataAccessObjectTest {
     @Test
     public void testPrecondicionesInvalidasLanzanAssertionError() {
         // Precondiciones con referencias nulas
-        assertThrows(AssertionError.class, () -> dao.guardar(null));
-        assertThrows(AssertionError.class, () -> dao.actualizar(null));
-        assertThrows(AssertionError.class, () -> dao.CrearDTO((Asociado) null));
+        assertThrows("guardar con asociado nulo debe lanzar AssertionError", AssertionError.class, () -> dao.guardar(null));
+        assertThrows("actualizar con asociado nulo debe lanzar AssertionError", AssertionError.class, () -> dao.actualizar(null));
+        assertThrows("CrearDTO con asociado nulo debe lanzar AssertionError", AssertionError.class, () -> dao.CrearDTO((Asociado) null));
 
         // Valores límite inválidos en cargar(id) y cargarConLimite(limite): 0 y negativos
-        assertThrows(AssertionError.class, () -> dao.cargar(0));
-        assertThrows(AssertionError.class, () -> dao.cargar(-1));
-        assertThrows(AssertionError.class, () -> dao.cargarConLimite(0));
-        assertThrows(AssertionError.class, () -> dao.cargarConLimite(-5));
+        assertThrows("cargar(0) debe lanzar AssertionError", AssertionError.class, () -> dao.cargar(0));
+        assertThrows("cargar(-1) debe lanzar AssertionError", AssertionError.class, () -> dao.cargar(-1));
+        assertThrows("cargarConLimite(0) debe lanzar AssertionError", AssertionError.class, () -> dao.cargarConLimite(0));
+        assertThrows("cargarConLimite(-5) debe lanzar AssertionError", AssertionError.class, () -> dao.cargarConLimite(-5));
 
         // Precondición de DNI vacío o nulo en eliminar(dni)
-        assertThrows(AssertionError.class, () -> dao.eliminar(""));
-        assertThrows(AssertionError.class, () -> dao.eliminar(null));
+        assertThrows("eliminar con DNI vacio debe lanzar AssertionError", AssertionError.class, () -> dao.eliminar(""));
+        assertThrows("eliminar con DNI nulo debe lanzar AssertionError", AssertionError.class, () -> dao.eliminar(null));
     }
 
     /**
@@ -349,6 +349,6 @@ public class DataAccessObjectTest {
 
         // Debería poder cargarse la BD o haberse impedido el insert previo, pero explota con AssertionError en CrearDTO
         ArrayList<AsociadoDTO> asociados = dao.cargarBD();
-        assertEquals(21, asociados.size());
+        assertEquals("cargarBD() debe retornar los 21 asociados", 21, asociados.size());
     }
 }
