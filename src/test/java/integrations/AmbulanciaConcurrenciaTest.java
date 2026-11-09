@@ -127,7 +127,7 @@ public class AmbulanciaConcurrenciaTest {
         hilo.setDaemon(true);
         hilo.start();
 
-        verify(estadoMock, timeout(12000).description("RetornoAutomatico debería hacer volver a la ambulancia a los 10 segundos, pero no lo hizo")).RetornoClinica();
+        verify(estadoMock, timeout(12000).description("RetornoAutomatico debería hacer volver a la ambulancia a los 10 segundos, pero no lo hizo ")).RetornoClinica();
 
         ambulancia.setSimulacionActiva(false);
         hilo.interrupt();

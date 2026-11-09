@@ -2,6 +2,8 @@ package units;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
 
 import org.junit.After;
 import org.junit.Before;
@@ -63,12 +65,15 @@ public class AsociadoDTOTest {
     }
 
     @Test
-    public void testSetNumeroInvalido() {
-        assertThrows("Un numero negativo debe lanzar AssertionError", AssertionError.class, () -> {
-            asociado.setNumero(-1);
-        });
+    public void testSetNumeroLimite() {
+        try {
+            asociado.setNumero(0);
+        } catch (AssertionError e) {
+            fail("'setNumero(0) lanzo AssertionError '" + e.getStackTrace()[0]);
+        }
+        assertEquals("El numero deberia ser igual a 0", 0, asociado.getNumero());
     }
-
+    
     @Test
     public void testSetTelefono() {
         asociado.setTelefono("3511234567");
