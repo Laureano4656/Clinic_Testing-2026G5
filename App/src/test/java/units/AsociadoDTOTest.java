@@ -18,7 +18,16 @@ public class AsociadoDTOTest {
 
     @Before
     public void setUp() {
+        // Inicializo un asociado con valores por defecto para que pueda saber si se
+        // modificaron en los test o no
         asociado = new AsociadoDTO();
+        asociado.setNombre("Nombre default");
+        asociado.setApellido("Apellido default");
+        asociado.setDni("Dni default");
+        asociado.setCiudad("Ciudad default");
+        asociado.setCalle("Calle default");
+        asociado.setNumero(200);
+        asociado.setTelefono("Telefono default");
     }
 
     @After
@@ -60,6 +69,12 @@ public class AsociadoDTOTest {
     public void testSetNumero() {
         asociado.setNumero(10);
         assertEquals("El numero debe ser el seteado", 10, asociado.getNumero());
+    }
+
+    @Test
+    public void testSetNumero0() {
+        asociado.setNumero(0);
+        assertEquals("El numero deberia ser igual a 0", 0, asociado.getNumero());
     }
 
     @Test
