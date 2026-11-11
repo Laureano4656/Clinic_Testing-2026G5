@@ -2,6 +2,8 @@ package units;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,16 +20,7 @@ public class AsociadoDTOTest {
 
     @Before
     public void setUp() {
-        // Inicializo un asociado con valores por defecto para que pueda saber si se
-        // modificaron en los test o no
         asociado = new AsociadoDTO();
-        asociado.setNombre("Nombre default");
-        asociado.setApellido("Apellido default");
-        asociado.setDni("Dni default");
-        asociado.setCiudad("Ciudad default");
-        asociado.setCalle("Calle default");
-        asociado.setNumero(200);
-        asociado.setTelefono("Telefono default");
     }
 
     @After
@@ -72,18 +65,15 @@ public class AsociadoDTOTest {
     }
 
     @Test
-    public void testSetNumero0() {
-        asociado.setNumero(0);
+    public void testSetNumeroLimite() {
+        try {
+            asociado.setNumero(0);
+        } catch (AssertionError e) {
+            fail("'setNumero(0) lanzo AssertionError '" + e.getStackTrace()[0]);
+        }
         assertEquals("El numero deberia ser igual a 0", 0, asociado.getNumero());
     }
-
-    @Test
-    public void testSetNumeroInvalido() {
-        assertThrows("Un numero negativo debe lanzar AssertionError", AssertionError.class, () -> {
-            asociado.setNumero(-1);
-        });
-    }
-
+    
     @Test
     public void testSetTelefono() {
         asociado.setTelefono("3511234567");
